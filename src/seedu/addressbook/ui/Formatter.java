@@ -29,33 +29,47 @@ public class Formatter {
     	_out = out;
     }
     
+    /**
+     * Prints a string to the print stream (without new line)
+     */
     public void print(String string) {
     	_out.print(LINE_PREFIX + string.replace("\n", LS + LINE_PREFIX));
     }
-    
+
+    /**
+     * Prints a blank line to the print stream
+     */
     public void printBlankLine() {
     	printLines("");
     }
 
+    /**
+     * Prints multiple lines to the print stream
+     */
 	public void printLines(String... strings) {
 		for (String string : strings) {
 			print(string);
 			_out.println();
 		}
 	}
-	
+
+    /**
+     * Prints a divider of 1 line
+     */
 	public void printDivider() {
 		printDivider(1);
 	}
 	
+    /**
+     * Prints a divider of {@code height} lines
+     */
 	public void printDivider(int height) {
 		for (int i = 0; i < height; i ++) {
 			printLines(DIVIDER);
 		}
 	}
 	
-	 /** Formats a list of strings as a viewable indexed list. */
-    /** Shows a list of strings to the user, formatted as an indexed list. */
+	/** Prints a list of strings as a viewable indexed list. */
     public void printIndexedList(List<String> listItems) {
         int displayIndex = 0 + DISPLAYED_INDEX_OFFSET;
         for (String listItem : listItems) {
@@ -66,7 +80,6 @@ public class Formatter {
 
     /**
      * Formats a string as a viewable indexed list item.
-     *
      * @param visibleIndex visible index for this listing
      */
     private static String getIndexedListItem(int visibleIndex, String listItem) {
