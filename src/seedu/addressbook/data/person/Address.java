@@ -84,8 +84,11 @@ public class Address {
 
     @Override
     public boolean equals(Object other) {
-        if (other != this // short circuit if same object
-        		|| !(other instanceof Address)) {
+        if (other == this) {// short circuit if same object
+        	return true;
+        }
+        
+        if (!(other instanceof Address)) {
         	return false; // instanceof handles nulls
         }
         
