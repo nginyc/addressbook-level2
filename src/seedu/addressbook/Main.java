@@ -55,7 +55,7 @@ public class Main {
             this.addressBook = storage.load();
             ui.showWelcomeMessage(VERSION, storage.getPath());
 
-        } catch (InvalidStorageFilePathException | StorageOperationException e) {
+        } catch (InvalidStorageFilePathException | StorageOperationException | StorageFileDeletedException e) {
             ui.showInitFailedMessage();
             /*
              * ==============NOTE TO STUDENTS=========================================================================

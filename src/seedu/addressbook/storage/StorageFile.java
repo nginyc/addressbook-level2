@@ -2,6 +2,7 @@ package seedu.addressbook.storage;
 
 import seedu.addressbook.data.AddressBook;
 import seedu.addressbook.data.exception.IllegalValueException;
+import seedu.addressbook.storage.StorageFile.StorageFileDeletedException;
 import seedu.addressbook.storage.jaxb.AdaptedAddressBook;
 
 import javax.xml.bind.JAXBContext;
@@ -19,6 +20,10 @@ public class StorageFile {
 
     /** Default file path used if the user doesn't provide the file name. */
     public static final String DEFAULT_STORAGE_FILEPATH = "addressbook.txt";
+    
+    public static final String MESSAGE_FILE_DELETED = "Storage file has been manually deleted by user!";
+    
+    private boolean _hasCreatedFile = false;
 
     /* Note: Note the use of nested classes below.
      * More info https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html
@@ -30,6 +35,15 @@ public class StorageFile {
     public static class InvalidStorageFilePathException extends IllegalValueException {
         public InvalidStorageFilePathException(String message) {
             super(message);
+        }
+    }
+    
+    /**
+     * Signals that the given storage file has been deleted while the program is running
+     */
+    public static class StorageFileDeletedException extends Exception {
+        public StorageFileDeletedException() {
+            super(MESSAGE_FILE_DELETED);
         }
     }
 
@@ -82,9 +96,14 @@ public class StorageFile {
      * Saves all data to this storage file.
      *
      * @throws StorageOperationException if there were errors converting and/or storing data to file.
+     * @throws StorageFileDeletedException if file has been manually deleted by user
      */
-    public void save(AddressBook addressBook) throws StorageOperationException {
-
+    public void save(AddressBook addressBook) throws StorageOperationException, StorageFileDeletedException {
+    	// If file is supposed to have been created and it is gone, throw error
+    	if (_hasCreatedFile && !path.toFile().exists()) {
+    		throw new StorageFileDeletedException();
+    	}
+    	
         /* Note: Note the 'try with resource' statement below.
          * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
          */
@@ -95,6 +114,8 @@ public class StorageFile {
             final Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(toSave, fileWriter);
+            
+            _hasCreatedFile = true;
 
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);
@@ -107,11 +128,14 @@ public class StorageFile {
      * Loads data from this storage file.
      *
      * @throws StorageOperationException if there were errors reading and/or converting data from file.
+     * @throws StorageFileDeletedException if file has been manually deleted by user
      */
-    public AddressBook load() throws StorageOperationException {
+    public AddressBook load() throws StorageOperationException, StorageFileDeletedException {
         try (final Reader fileReader =
                      new BufferedReader(new FileReader(path.toFile()))) {
-
+        	
+        	_hasCreatedFile = true;
+        	
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             final AdaptedAddressBook loaded = (AdaptedAddressBook) unmarshaller.unmarshal(fileReader);
             // manual check for missing elements
@@ -144,5 +168,4 @@ public class StorageFile {
     public String getPath() {
         return path.toString();
     }
-
 }
