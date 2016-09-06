@@ -10,8 +10,8 @@ import java.util.Objects;
  */
 public class Person implements ReadOnlyPerson {
 
-	private static int nextSequenceNumber = 1;
-	private int sequenceNumber;
+    private static int nextSequenceNumber = 1;
+    private int sequenceNumber;
     private Name name;
     private Phone phone;
     private Email email;
