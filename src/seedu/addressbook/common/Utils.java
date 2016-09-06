@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import seedu.addressbook.ui.Printable;
+
 /**
  * Utility methods
  */
@@ -34,5 +36,19 @@ public class Utils {
             }
         }
         return true;
+    }
+    
+	
+    /**
+     * Returns a concatenated version of the printable strings of each object.
+     */
+    public static String getPrintableString(Printable... printables) {
+    	final StringBuilder stringBuilder = new StringBuilder();
+  
+    	for (Printable printable : printables) {
+    		stringBuilder.append(printable.getPrintableString());
+    	}
+    	
+    	return stringBuilder.toString();
     }
 }
