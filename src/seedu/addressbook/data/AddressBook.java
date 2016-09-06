@@ -5,7 +5,10 @@ import seedu.addressbook.data.person.UniquePersonList.*;
 import seedu.addressbook.data.tag.UniqueTagList;
 import seedu.addressbook.data.tag.UniqueTagList.*;
 import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.Tagging;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,13 +25,15 @@ public class AddressBook {
 
     private final UniquePersonList allPersons;
     private final UniqueTagList allTags; // can contain tags not attached to any person
-
+    private final ArrayList<Tagging> taggings; // list of taggings/untaggings done on all persons
+    
     /**
      * Creates an empty address book.
      */
     public AddressBook() {
         allPersons = new UniquePersonList();
         allTags = new UniqueTagList();
+        taggings = new ArrayList<Tagging>();
     }
 
     /**
@@ -41,6 +46,8 @@ public class AddressBook {
     public AddressBook(UniquePersonList persons, UniqueTagList tags) {
         this.allPersons = new UniquePersonList(persons);
         this.allTags = new UniqueTagList(tags);
+        this.taggings = new ArrayList<Tagging>();
+        
         for (Person p : allPersons) {
             syncTagsWithMasterList(p);
         }
@@ -89,7 +96,33 @@ public class AddressBook {
     public void addTag(Tag toAdd) throws DuplicateTagException {
         allTags.add(toAdd);
     }
+    
+    /**
+     * Adds a tag to a person
+     */
+    public void addTagToPerson(Person person, Tag tag) throws DuplicateTagException {    			
+    	// Modify person's tag list
+    	UniqueTagList tagsList = person.getTags();
+    	tagsList.add(tag);
+    	person.setTags(tagsList);
+    	
+    	// Record tagging action
+    	taggings.add(new Tagging(person, tag, Tagging.MODE.ADD));
+    }
 
+    /**
+     * Deletes a tag from a person
+     */
+    public void deleteTagFromPerson(Person person, Tag tag) throws TagNotFoundException {    			
+    	// Modify person's tag list
+    	UniqueTagList tagsList = person.getTags();
+    	tagsList.remove(tag);
+    	person.setTags(tagsList);
+    	
+    	// Record tagging action
+    	taggings.add(new Tagging(person, tag, Tagging.MODE.DELETE));
+    }
+    
     /**
      * Checks if an equivalent person exists in the address book.
      */
@@ -142,5 +175,12 @@ public class AddressBook {
      */
     public UniqueTagList getAllTags() {
         return new UniqueTagList(allTags);
+    }
+    
+    /**
+     * Returns copied collection of all tagging actions
+     */
+    public Collection<Tagging> getTaggings() {
+    	return new ArrayList<>(taggings);
     }
 }

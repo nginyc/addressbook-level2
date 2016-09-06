@@ -31,4 +31,20 @@ public class Tagging {
 	public MODE getMode() {
 		return mode;
 	}
+	
+	@Override
+	public String toString() {
+		String prefix = "";
+		
+		switch (mode) {
+		case ADD: 
+			prefix = "+"; 
+			break;
+		case DELETE: 
+			prefix = "-"; 
+			break;
+		}
+		
+		return prefix + " " + personTagged.getName().toString() + " " + tag.toString();
+	}
 }
