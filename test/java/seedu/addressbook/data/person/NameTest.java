@@ -87,4 +87,10 @@ public class NameTest {
         assertFalse(name.isSimilar(new Name("Some Fish Ball Nuggets")));
         assertFalse(name.isSimilar(new Name("Fish Ball Green Nuggets")));
     }
+    
+    @Test
+    public void isSimilar_fewerWords_false() throws IllegalValueException {
+        assertFalse(name.isSimilar(new Name("Fish Ball")));
+        assertFalse(name.isSimilar(new Name("Nuggets")));
+    }
 }
