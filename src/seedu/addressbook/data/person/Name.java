@@ -3,6 +3,7 @@ package seedu.addressbook.data.person;
 import seedu.addressbook.data.exception.IllegalValueException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -61,4 +62,25 @@ public class Name {
         return fullName.hashCode();
     }
 
+    public boolean isSimilar(Name otherName) {
+        if (otherName == null) {
+            return false;
+        }
+        
+        HashSet<String> nameWords = new HashSet<>();
+        for (String word : fullName.split("[\\s]+")) {
+            nameWords.add(word.toLowerCase().trim());
+        }
+        
+        for (String word : otherName.fullName.split("[\\s]+")) {
+            String processedWord = word.toLowerCase().trim();
+            if (nameWords.contains(processedWord)) {
+                nameWords.remove(processedWord);
+            } else {
+                return false; // A word in otherName could not be found in name
+            }
+        }
+        
+        return nameWords.isEmpty(); // Only true if all of name's words are found
+    }
 }
